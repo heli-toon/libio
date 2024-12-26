@@ -1,0 +1,92 @@
+<!-- Dashboard (dashboard.html) -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Library Management</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">Libio Dashboard</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container py-5">
+      <h2 class="mb-4">Welcome, [Username]</h2>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card shadow text-center">
+            <div class="card-body">
+              <i class="bi bi-book" style="font-size: 2rem; color: #f8b500"></i>
+              <h5 class="mt-3">Manage Books</h5>
+              <a
+                href="#"
+                class="btn btn-primary mt-3"
+                style="background-color: #16213e; border: none"
+                >View</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow text-center">
+            <div class="card-body">
+              <i
+                class="bi bi-people"
+                style="font-size: 2rem; color: #f8b500"
+              ></i>
+              <h5 class="mt-3">Manage Users</h5>
+              <a
+                href="#"
+                class="btn btn-primary mt-3"
+                style="background-color: #16213e; border: none"
+                >View</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow text-center">
+            <div class="card-body">
+              <i
+                class="bi bi-card-checklist"
+                style="font-size: 2rem; color: #f8b500"
+              ></i>
+              <h5 class="mt-3">Borrow Requests</h5>
+              <a
+                href="#"
+                class="btn btn-primary mt-3"
+                style="background-color: #16213e; border: none"
+                >View</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</html>
