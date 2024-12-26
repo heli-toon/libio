@@ -1,3 +1,4 @@
 .env
 ideas.txt
 __pycache__
+*.db
