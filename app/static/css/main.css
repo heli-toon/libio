@@ -1,0 +1,73 @@
+@font-face {
+  font-family: "Roboto";
+  src: url("../fonts/Roboto-Regular.ttf");
+}
+:root {
+  scroll-behavior: smooth;
+}
+::selection {
+  background: var(--yellow);
+  color: var(--darkblue);
+}
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  --darkblue: #16213e;
+  --yellow: #f8b500;
+  --white: #eeeff4;
+  --black: #292929;
+  --gray: #5e6555;
+}
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: auto;
+  scrollbar-color: var(--green) var(--black);
+}
+::-webkit-scrollbar {
+  width: 0.685vw;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--green);
+  border-radius: 7px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--greendark);
+}
+::-webkit-scrollbar-track {
+  background-color: var(--black);
+  margin-block: 0.5em;
+}
+body {
+  overflow-x: hidden;
+  font-family: "Roboto", sans-serif, system-ui;
+  color: var(--black) !important;
+}
+section {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  text-align: center;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Montserrat Regular", "Satoshi", Inter, system-ui, monospace;
+  font-weight: 700;
+  line-height: inherit;
+  letter-spacing: -1px;
+  color: var(--green) !important;
+}
+header {
+  background-color: var(--yellow);
+  color: var(--black);
+}
+nav {
+  background-color: var(--darkblue);
+}
