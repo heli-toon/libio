@@ -68,8 +68,11 @@ header {
   background-color: var(--yellow);
   color: var(--black);
 }
-nav {
+nav {background-color: var(--darkblue)}
+
+footer {
   background-color: var(--darkblue);
+  color: var(--white);
 }
 .back-to-top {
   position: fixed;

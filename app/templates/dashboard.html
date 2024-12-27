@@ -4,15 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Library Management</title>
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+    <link
+      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
   </head>
   <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container">
-        <a class="navbar-brand" href="#">Libio Dashboard</a>
+        <a class="navbar-brand" href="/">Libio Dashboard</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -33,7 +42,18 @@
         </div>
       </div>
     </nav>
-
+    <!-- Flash (Alert) messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mt-3">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button class="btn-close" data-bs-dismiss="alert" title="Close"></button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
     <!-- Dashboard Content -->
     <div class="container py-5">
       <h2 class="mb-4">Welcome, {{ current_user.username }}</h2>
@@ -46,28 +66,77 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="title" class="form-label">Book Title</label>
-                <input type="text" class="form-control" id="title" name="title" required />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  name="title"
+                  required
+                />
               </div>
               <div class="col-md-6">
                 <label for="author" class="form-label">Author</label>
-                <input type="text" class="form-control" id="author" name="author" required />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="author"
+                  name="author"
+                  required
+                />
               </div>
             </div>
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="genre" class="form-label">Genre</label>
-                <input type="text" class="form-control" id="genre" name="genre" />
+                <select name="genre" id="genre" title="Genre" class="form-select" id="genre">
+                  <option value="General Works, Computer Science and Information">General Works, Computer Science and Information</option>
+                  <option value="Philosphy & Psycholoy">Philosphy & Psycholoy</option>
+                  <option value="Religion">Religion</option>
+                  <option value="Social Sciences">Social Sciences</option>
+                  <option value="Science">Science</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Arts & creation">Arts & creation</option>
+                  <option value="Literature">Literature</option>
+                  <option value="Fiction">Fiction</option>
+                  <option value="Unclassified">Unclassified</option>
+                </select>
               </div>
               <div class="col-md-6">
-                <label for="copies_available" class="form-label">Copies Available</label>
-                <input type="number" class="form-control" id="copies_available" name="copies_available" min="1" value="1" required />
+                <label for="copies_available" class="form-label"
+                  >Copies Available</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="copies_available"
+                  name="copies_available"
+                  min="1"
+                  value="1"
+                  required
+                />
               </div>
             </div>
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
               <textarea class="form-control" id="description" name="description" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary" style="background-color: #16213e; border: none">Add Book</button>
+            <button
+              type="submit"
+              class="btn btn-primary py-2 px-4"
+              style="background-color: #16213e; border: none">
+              <i class="bi bi-plus-circle"></i>
+              Add Book
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="card shadow mb-4">
+        <div class="card-body">
+          <form action="{{ url_for('main.search_books') }}" method="GET" class="d-flex">
+            <input type="text" class="form-control me-2" name="query" placeholder="Search by title, author, or Genre" required />
+            <button type="submit" class="btn btn-primary d-flex gap-2" style="background-color: #16213e; border: none"><i class="bi bi-search"></i> Search</button>
           </form>
         </div>
       </div>
@@ -75,7 +144,7 @@
       <!-- Book Table -->
       <div class="card shadow">
         <div class="card-body">
-          <h5 class="mb-3">Books</h5>
+          <h5 class="mb-3">All Books</h5>
           <table class="table table-hover">
             <thead>
               <tr>
@@ -90,15 +159,25 @@
             <tbody>
               {% for book in books %}
               <tr>
-                <td>{{ loop.index }}</td>
+                <td>{{ book.id }}</td>
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
                 <td>{{ book.genre or 'N/A' }}</td>
                 <td>{{ book.copies_available }}</td>
                 <td>
-                  <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-warning btn-sm me-2">Edit</a>
-                  <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                  <a
+                    href="{{ url_for('main.edit_book', book_id=book.id) }}"
+                    class="btn btn-warning btn-sm me-2"
+                    ><i class="bi bi-pencil-square"></i></a
+                  >
+                  <form
+                    action="{{ url_for('main.delete_book', book_id=book.id) }}"
+                    method="POST"
+                    style="display: inline"
+                  >
+                    <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
                   </form>
                 </td>
               </tr>

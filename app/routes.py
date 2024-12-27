@@ -39,16 +39,19 @@ def dashboard():
 def home():
     return render_template('index.html', title="home")
 
+@login_required
 @main.route('/add-book', methods=['POST'])
 def add_book():
     try:
         title = request.form['title']
         author = request.form['author']
+        genre = request.form['genre']
 
         # Create a new book object
         new_book = Book(
             title=title,
-            author=author,)
+            author=author,
+            genre=genre,)
 
         db.session.add(new_book)
         db.session.commit()
@@ -62,7 +65,7 @@ def add_book():
         flash(f'Error: {str(e)}', 'danger')
         return redirect(url_for('main.dashboard'))
 
-
+@login_required
 @main.route('/search-books', methods=['GET'])
 def search_books():
     query = request.args.get('query')
@@ -73,19 +76,23 @@ def search_books():
     ).all()
     return render_template('dashboard.html', books=books)
 
+@login_required
 @main.route('/edit-book/<int:book_id>', methods=['GET', 'POST'])
 def edit_book(book_id):
     book = Book.query.get_or_404(book_id)
     if request.method == 'POST':
         book.title = request.form['title']
         book.author = request.form['author']
-        book.isbn = request.form['isbn']
+        book.genre = request.form['genre']
+        book.description = request.form['description']
+        book.copies_available = request.form['copies_available']
         db.session.commit()
         flash("Book updated successfully!", "success")
         return redirect(url_for('main.dashboard'))
     return render_template('edit_book.html', book=book)
 
-@main.route('/delete-book/<int:book_id>', methods=['GET'])
+@login_required
+@main.route('/delete-book/<int:book_id>', methods=['GET', 'DELETE'])
 def delete_book(book_id):
     book = Book.query.get_or_404(book_id)
     db.session.delete(book)
