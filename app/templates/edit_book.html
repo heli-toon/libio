@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Book - Libio</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">Libio Dashboard</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.logout') }}">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Edit Book Form -->
+    <div class="container py-5">
+      <h2 class="mb-4">Edit Book</h2>
+      <div class="card shadow">
+        <div class="card-body">
+          <form action="{{ url_for('main.edit_book', book_id=book.id) }}" method="POST">
+            <div class="mb-3">
+              <label for="title" class="form-label">Book Title</label>
+              <input
+                type="text"
+                class="form-control"
+                id="title"
+                name="title"
+                value="{{ book.title }}"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="author" class="form-label">Author</label>
+              <input
+                type="text"
+                class="form-control"
+                id="author"
+                name="author"
+                value="{{ book.author }}"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="genre" class="form-label">Genre</label>
+              <input
+                type="text"
+                class="form-control"
+                id="genre"
+                name="genre"
+                value="{{ book.genre }}"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="description"
+                name="description"
+                rows="4"
+              >{{ book.description }}</textarea>
+            </div>
+            <div class="mb-3">
+              <label for="copies_available" class="form-label">Copies Available</label>
+              <input
+                type="number"
+                class="form-control"
+                id="copies_available"
+                name="copies_available"
+                value="{{ book.copies_available }}"
+                min="1"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-primary" style="background-color: #16213e; border: none">
+              Save Changes
+            </button>
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary ms-2">Cancel</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</html>

@@ -28,6 +28,7 @@ class Book(db.Model):
     genre = db.Column(db.String(50), nullable=True)
     description = db.Column(db.Text, nullable=True)
     copies_available = db.Column(db.Integer, nullable=False, default=1)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f"<Book {self.title} by {self.author}>"
