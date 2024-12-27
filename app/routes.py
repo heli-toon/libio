@@ -92,7 +92,7 @@ def edit_book(book_id):
     return render_template('edit_book.html', book=book)
 
 @login_required
-@main.route('/delete-book/<int:book_id>', methods=['GET', 'DELETE'])
+@main.route('/delete-book/<int:book_id>', methods=['POST'])
 def delete_book(book_id):
     book = Book.query.get_or_404(book_id)
     db.session.delete(book)
