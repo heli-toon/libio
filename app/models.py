@@ -9,6 +9,7 @@ db = SQLAlchemy()
 class Admin(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)  # Add this line
     password_hash = db.Column(db.String(255), nullable=False)  # Store hashed passwords
 
     def set_password(self, password):
@@ -24,6 +25,7 @@ class Admin(db.Model, UserMixin):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)  # Store hashed passwords
 
     def set_password(self, password):

@@ -5,8 +5,9 @@ from werkzeug.security import generate_password_hash
 # Add test data function
 def add_test_data():
     admin = Admin(
-        username="muhaimin",
-        password_hash=generate_password_hash("minty12~", method='scrypt')
+        username="admin",
+        email="admin@example.com",  # Provide an email value
+        password_hash=generate_password_hash("adminpassword", method='scrypt')
     )
     db.session.add(admin)
     db.session.commit()

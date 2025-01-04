@@ -6,7 +6,6 @@ main = Blueprint('main', __name__)
 admin = Blueprint('admin', __name__)
 
 # Admin Login
-# Admin Login
 @admin.route('/login', methods=['GET', 'POST'])
 def loginAdmin():
     if request.method == 'POST':
@@ -33,7 +32,6 @@ def login():
             return redirect(url_for('admin.dashboard'))
         flash('Invalid user credentials.', 'danger')
     return render_template('login.html', title="User Login")
-
 
 # Logout
 @main.route('/logout')
