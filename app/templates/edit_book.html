@@ -27,7 +27,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.logout') }}">Logout</a>
+              <a class="nav-link" href="{{ url_for('admin.logout') }}">Logout</a>
             </li>
           </ul>
         </div>
@@ -39,7 +39,7 @@
       <h2 class="mb-4">Edit Book</h2>
       <div class="card shadow">
         <div class="card-body">
-          <form action="{{ url_for('main.edit_book', book_id=book.id) }}" method="POST">
+          <form action="{{ url_for('admin.edit_book', book_id=book.id) }}" method="POST">
             <div class="mb-3">
               <label for="title" class="form-label">Book Title</label>
               <input
@@ -101,7 +101,7 @@
             <button type="submit" class="btn btn-primary py-2 px-4" style="background-color: #16213e; border: none">
               <i class="bi bi-floppy2"></i> Save Changes
             </button>
-            <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary ms-2 py-2 px-4"><i class="bi bi-x-circle"></i> Cancel</a>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary ms-2 py-2 px-4"><i class="bi bi-x-circle"></i> Cancel</a>
           </form>
         </div>
       </div>

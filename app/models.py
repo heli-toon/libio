@@ -20,6 +20,21 @@ class Admin(db.Model, UserMixin):
     def __repr__(self):
         return f"<Admin {self.username}>"
 
+# User model
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)  # Store hashed passwords
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def __repr__(self):
+        return f"<User {self.username}>"
+
 # Book model
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,7 +48,7 @@ class Book(db.Model):
     def __repr__(self):
         return f"<Book {self.title} by {self.author}>"
 
-# Borrow Request model
+# BorrowRequest model
 class BorrowRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
@@ -41,4 +56,4 @@ class BorrowRequest(db.Model):
     request_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"<BorrowRequest {self.id} - {self.status}>"
+        return f"<BorrowRequest {self.id} - Book ID {self.book_id}>"
