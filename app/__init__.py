@@ -13,7 +13,6 @@ def create_app():
 
     db.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = 'admin.loginAdmin'
 
     # Register blueprints
     from .routes import main, admin
@@ -27,8 +26,5 @@ def create_app():
     return app
 
 @login_manager.user_loader
-
-@login_manager.user_loader
 def load_user(user_id):
-    # Try to load user as Admin first, then as regular User
     return Admin.query.get(int(user_id)) or User.query.get(int(user_id))

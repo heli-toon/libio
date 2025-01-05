@@ -1,9 +1,30 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
+from functools import wraps
 from app.models import db, Admin, Book, User
 
+# Blueprint definitions
 main = Blueprint('main', __name__)
 admin = Blueprint('admin', __name__)
+
+# Custom Decorators
+def admin_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if not current_user.is_authenticated or not isinstance(current_user, Admin):
+            flash("Access restricted to administrators only!", "danger")
+            return redirect(url_for("admin.loginAdmin"))
+        return func(*args, **kwargs)
+    return decorated_view
+
+def user_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if not current_user.is_authenticated or not isinstance(current_user, User):
+            flash("Access restricted to users only!", "danger")
+            return redirect(url_for("main.login"))
+        return func(*args, **kwargs)
+    return decorated_view
 
 # Admin Login
 @admin.route('/login', methods=['GET', 'POST'])
@@ -29,7 +50,7 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             flash('Login successful!', 'success')
-            return redirect(url_for('admin.dashboard'))
+            return redirect(url_for('main.userhome'))
         flash('Invalid user credentials.', 'danger')
     return render_template('login.html', title="User Login")
 
@@ -42,26 +63,29 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.home'))
 
-# Dashboard (protected)
+# Admin Dashboard (protected)
 @admin.route('/dashboard')
-@login_required
+@admin_required
 def dashboard():
     books = Book.query.all()
-    return render_template('dashboard.html', title="Dashboard", books=books)
+    return render_template('dashboard.html', title="Admin Dashboard", books=books)
 
-# Home
+# User Home Page (protected)
+@main.route('/home')
+@user_required
+def userhome():
+    books = Book.query.all()
+    return render_template('home.html', title="User Home", books=books)
+
+# Public Home
 @main.route('/')
 def home():
     return render_template('index.html', title="Home")
 
-# Add Book
+# Add Book (admin only)
 @admin.route('/add-book', methods=['POST'])
-@login_required
+@admin_required
 def add_book():
-    if current_user.is_anonymous or current_user.__class__ != Admin:
-        flash('Only admins can add books.', 'danger')
-        return redirect(url_for('admin.dashboard'))
-
     title = request.form['title']
     author = request.form['author']
     genre = request.form['genre']
@@ -80,9 +104,9 @@ def add_book():
     flash('Book added successfully!', 'success')
     return redirect(url_for('admin.dashboard'))
 
-# Edit Book
+# Edit Book (admin only)
 @admin.route('/edit-book/<int:book_id>', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def edit_book(book_id):
     book = Book.query.get_or_404(book_id)
     if request.method == 'POST':
@@ -90,15 +114,15 @@ def edit_book(book_id):
         book.author = request.form['author']
         book.genre = request.form['genre']
         book.description = request.form['description']
-        book.copies_available = request.form['copies_available']
+        book.copies_available = int(request.form['copies_available'])
         db.session.commit()
         flash('Book updated successfully!', 'success')
         return redirect(url_for('admin.dashboard'))
     return render_template('edit_book.html', book=book)
 
-# Delete Book
+# Delete Book (admin only)
 @admin.route('/delete-book/<int:book_id>', methods=['POST'])
-@login_required
+@admin_required
 def delete_book(book_id):
     book = Book.query.get_or_404(book_id)
     db.session.delete(book)
@@ -106,9 +130,9 @@ def delete_book(book_id):
     flash('Book deleted successfully!', 'success')
     return redirect(url_for('admin.dashboard'))
 
-# Search Books
+# Search Books (admin only)
 @admin.route('/search-books', methods=['GET'])
-@login_required
+@admin_required
 def search_books():
     query = request.args.get('query', '')
     books = Book.query.filter(
@@ -141,6 +165,6 @@ def signup():
 
         login_user(new_user)
         flash('Signup successful! Welcome to the platform.', 'success')
-        return redirect(url_for('main.home'))
+        return redirect(url_for('main.userhome'))
 
     return render_template('signup.html', title="Signup")
