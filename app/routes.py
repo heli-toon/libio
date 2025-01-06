@@ -33,12 +33,19 @@ def loginAdmin():
         username = request.form['username']
         password = request.form['password']
         admin = Admin.query.filter_by(username=username).first()
+        
+        # Validate admin credentials
         if admin and admin.check_password(password):
             login_user(admin)
             flash('Admin login successful!', 'success')
             return redirect(url_for('admin.dashboard'))
+        
+        # Show error message for invalid credentials
         flash('Invalid admin credentials.', 'danger')
+        return redirect(url_for('admin.loginAdmin'))  # Reload login page
+    
     return render_template('admin_login.html', title="Admin Login")
+
 
 # User Login
 @main.route('/login', methods=['GET', 'POST'])
@@ -47,12 +54,19 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
+        
+        # Validate user credentials
         if user and user.check_password(password):
             login_user(user)
             flash('Login successful!', 'success')
             return redirect(url_for('main.userhome'))
+        
+        # Show error message for invalid credentials
         flash('Invalid user credentials.', 'danger')
+        return redirect(url_for('main.login'))  # Reload login page
+    
     return render_template('login.html', title="User Login")
+
 
 # Logout
 @main.route('/logout')
@@ -68,7 +82,9 @@ def logout():
 @admin_required
 def dashboard():
     books = Book.query.all()
-    return render_template('dashboard.html', title="Admin Dashboard", books=books)
+    user_count = User.query.count()
+    book_count = Book.query.count()
+    return render_template('dashboard.html', title="Admin Dashboard", books=books, user_count=user_count, book_count=book_count)
 
 # User Home Page (protected)
 @main.route('/home')
@@ -140,7 +156,9 @@ def search_books():
         (Book.author.ilike(f"%{query}%")) |
         (Book.genre.ilike(f"%{query}%"))
     ).all()
-    return render_template('dashboard.html', books=books)
+    user_count = User.query.count()
+    book_count = Book.query.count()
+    return render_template('dashboard.html', books=books, user_count=user_count, book_count=book_count)
 
 # User Signup
 @main.route('/signup', methods=['GET', 'POST'])
