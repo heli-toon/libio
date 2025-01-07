@@ -2,17 +2,13 @@
   font-family: "Roboto";
   src: url("../fonts/Roboto-Regular.ttf");
 }
-:root {
-  scroll-behavior: smooth;
-}
+:root {scroll-behavior: smooth}
 ::selection {
   background: var(--yellow);
   color: var(--darkblue);
 }
 *:before,
-*:after {
-  box-sizing: border-box;
-}
+*:after {box-sizing: border-box}
 * {
   margin: 0;
   padding: 0;
@@ -28,16 +24,12 @@ html {
   scrollbar-width: auto;
   scrollbar-color: var(--green) var(--white);
 }
-::-webkit-scrollbar {
-  width: 0.685vw;
-}
+::-webkit-scrollbar {width: 0.685vw}
 ::-webkit-scrollbar-thumb {
   background-color: var(--darkblue);
   border-radius: 7px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--black);
-}
+::-webkit-scrollbar-thumb:hover {background-color: var(--black)}
 ::-webkit-scrollbar-track {
   background-color: var(--white);
   margin-block: 0.5em;
@@ -72,29 +64,24 @@ header {
 body {
   background-color: var(--white);
 }
-
 .card {
   border-radius: 12px;
   border: none;
   box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
   background-color: var(--white);
 }
-
 .card h3 {
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--darkblue);
 }
-
 .card-body {
   padding: 30px 40px;
 }
-
 .form-label {
   font-weight: 600;
   color: var(--darkblue);
 }
-
 .form-control {
   border-radius: 8px;
   border: 1px solid var(--gray);
@@ -102,12 +89,10 @@ body {
   padding: 10px 15px;
   transition: border-color 0.3s ease;
 }
-
 .form-control:focus {
   border-color: var(--yellow);
   box-shadow: 0 0 5px rgba(248, 181, 0, 0.3);
 }
-
 .btn-primary {
   background-color: var(--darkblue);
   color: var(--white);
@@ -115,44 +100,34 @@ body {
   font-weight: 700;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
-
 .btn-primary:hover {
   background-color: var(--yellow)!important;
   transform: translateY(-3px);
   color: var(--darkblue);
 }
-
-.btn-primary:active {
-  transform: scale(0.98);
-}
-
+.btn-primary:active {transform: scale(0.98)}
 p.text-center {
   margin-top: 15px;
   font-size: 0.9rem;
   color: var(--gray);
 }
-
 p.text-center a {
   color: var(--darkblue);
   text-decoration: underline;
   font-weight: bold;
 }
-
 p.text-center a:hover {
   color: var(--yellow);
 }
-
 /* Flash Message Styling */
 .alert {
   border-radius: 8px;
   font-size: 0.95rem;
   margin-top: 15px;
 }
-
 .alert button {
   font-size: 1.1rem;
 }
-
 nav {background-color: var(--darkblue)}
 /* Navbar Styling */
 nav.navbar {
@@ -160,24 +135,20 @@ nav.navbar {
   padding: 15px 20px;
   font-size: 1rem;
 }
-
 nav.navbar .navbar-brand {
   color: var(--yellow);
   font-weight: bold;
   font-size: 1.5rem;
   letter-spacing: 0.5px;
 }
-
 nav.navbar .nav-link {
   color: var(--white);
   margin-left: 10px;
   transition: color 0.3s ease;
 }
-
 nav.navbar .nav-link:hover {
   color: var(--yellow);
 }
-
 /* Header Styling */
 header {
   background-color: var(--yellow);
@@ -185,43 +156,36 @@ header {
   padding: 50px 0;
   text-align: center;
 }
-
 header h1 {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 20px;
 }
-
 header p.lead {
   font-size: 1.2rem;
   margin-bottom: 30px;
   color: var(--black);
 }
-
 header .btn {
   margin: 5px;
   font-size: 1rem;
   border-radius: 5px;
 }
-
 /* About Section */
 section#about {
   background-color: var(--white);
   padding: 60px 20px;
   text-align: center;
 }
-
 section#about h2 {
   font-size: 2rem;
   margin-bottom: 20px;
   color: var(--darkblue);
 }
-
 section#about p {
   color: var(--gray);
   margin-bottom: 40px;
 }
-
 .team-member {
   background-color: var(--white);
   border: 1px solid var(--gray);
@@ -230,46 +194,38 @@ section#about p {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
 }
-
 .team-member:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
-
 .team-member h4 {
   font-size: 1.3rem;
   color: var(--darkblue);
   margin-bottom: 10px;
 }
-
 .team-member p {
   color: var(--gray);
 }
-
 /* Footer Styling */
 footer {
   background-color: var(--darkblue);
   color: var(--white);
   padding: 30px 0;
 }
-
 footer ul {
   list-style: none;
   padding: 0;
   margin: 10px 0;
 }
-
 footer ul li {
   display: inline-block;
   margin: 0 10px;
 }
-
 footer ul li a {
   color: var(--white);
   text-decoration: none;
   transition: color 0.3s;
 }
-
 footer ul li a:hover {
   color: var(--yellow);
 }
@@ -278,11 +234,9 @@ footer ul li a:hover {
   header h1 {
     font-size: 2rem;
   }
-
   header p.lead {
     font-size: 1rem;
   }
-
   .team-member {
     margin-bottom: 20px;
   }
@@ -317,4 +271,38 @@ footer {
 .back-to-top.active {
   visibility: visible;
   opacity: 1;
+}
+section#features .feature {
+  padding: 20px;
+  border: 1px solid var(--gray);
+  border-radius: 10px;
+  background-color: var(--white);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+section#features .feature:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+section#features .feature i {
+  font-size: 3rem;
+  color: var(--darkblue);
+}
+section#testimonials blockquote {
+  padding: 20px;
+  border-left: 4px solid var(--yellow);
+  background-color: var(--white);
+  font-style: italic;
+}
+section#testimonials blockquote footer {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--gray);
+}
+section#cta {
+  background-color: var(--darkblue);
+  color: var(--white);
+}
+section#cta .btn {
+  padding: 10px 20px;
+  font-size: 1.2rem;
 }
