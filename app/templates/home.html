@@ -58,28 +58,54 @@
     </nav>
 
     <!-- Flash (Alert) messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      <div class="container mt-3">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button class="btn-close" data-bs-dismiss="alert" title="Close"></button>
-        </div>
-        {% endfor %}
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="container mt-3">
+      {% for category, message in messages %}
+      <div
+        class="alert alert-{{ category }} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ message }}
+        <button
+          class="btn-close"
+          data-bs-dismiss="alert"
+          title="Close"
+        ></button>
       </div>
-      {% endif %}
-    {% endwith %}
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
     <!-- Main Content -->
     <div class="container my-4">
       <h1 class="text-center mb-4">Available Books</h1>
+      <!-- Search Bar -->
+      <form
+        class="d-flex mb-4"
+        action="{{ url_for('main.userhome') }}"
+        method="GET"
+      >
+        <input
+          class="form-control me-2"
+          type="search"
+          name="query"
+          placeholder="Search books by title, author, or genre"
+          aria-label="Search"
+          value="{{ query }}"
+        />
+        <button class="btn btn-primary d-flex gap-2 align-items-center" type="submit"><i class="bi bi-search"></i> Search</button>
+      </form>
+
       <div class="row">
-        {% for book in books %}
+        {% if books %} {% for book in books %}
         <div class="col-md-4">
           <div class="card mb-4">
-            <!-- Display the book cover image if it exists -->
             {% if book.image_url %}
-            <img src="{{ book.image_url }}" class="card-img-top" alt="Book Cover">
+            <img
+              src="{{ book.image_url }}"
+              class="card-img-top"
+              alt="Book Cover"
+            />
             {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ book.title }}</h5>
@@ -92,17 +118,36 @@
               <p class="card-text">
                 <strong>Copies Available:</strong> {{ book.copies_available }}
               </p>
-              {% if current_user.is_authenticated %}
-              <!-- Borrow Request Form -->
-              <form action="{{ url_for('main.request_borrow', book_id=book.id) }}" method="POST">
-                <input type="hidden" name="borrower_name" value="{{ current_user.username }}">
-                <button type="submit" class="btn btn-primary">Request Borrow</button>
+              {% if current_user.is_authenticated %} {% if book.copies_available
+              > 0 %}
+              <form
+                action="{{ url_for('main.request_borrow', book_id=book.id) }}"
+                method="POST"
+              >
+                <input
+                  type="hidden"
+                  name="borrower_name"
+                  value="{{ current_user.username }}"
+                />
+                <button type="submit" class="btn btn-primary">
+                  Request Borrow
+                </button>
               </form>
-              {% endif %}
+              {% else %}
+              <button class="btn btn-secondary" disabled>
+                No Copies Available
+              </button>
+              {% endif %} {% endif %}
             </div>
           </div>
         </div>
-        {% endfor %}
+        {% endfor %} {% else %}
+        <div class="col-12 text-center">
+          <p class="text-muted">
+            No books found. Try a different search query.
+          </p>
+        </div>
+        {% endif %}
       </div>
     </div>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>

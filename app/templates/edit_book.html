@@ -44,6 +44,7 @@
                     method="POST"
                     enctype="multipart/form-data"
                 >
+                    <!-- Book Title -->
                     <div class="mb-3">
                         <label for="title" class="form-label">Book Title</label>
                         <input
@@ -55,6 +56,8 @@
                             required
                         />
                     </div>
+
+                    <!-- Author -->
                     <div class="mb-3">
                         <label for="author" class="form-label">Author</label>
                         <input
@@ -66,6 +69,8 @@
                             required
                         />
                     </div>
+
+                    <!-- Genre -->
                     <div class="mb-3">
                         <label for="genre" class="form-label">Genre</label>
                         <select name="genre" class="form-select" id="genre" required>
@@ -81,6 +86,8 @@
                             <option value="Unclassified">Unclassified</option>
                         </select>
                     </div>
+
+                    <!-- Description -->
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <textarea
@@ -90,6 +97,8 @@
                             rows="4"
                         >{{ book.description }}</textarea>
                     </div>
+
+                    <!-- Copies Available -->
                     <div class="mb-3">
                         <label for="copies_available" class="form-label">Copies Available</label>
                         <input
@@ -102,31 +111,45 @@
                             required
                         />
                     </div>
+
+                    <!-- Book Cover -->
                     <div class="mb-3">
                         <label for="book_cover" class="form-label">Book Cover</label>
-                        <input type="file" class="form-control" id="book_cover" name="book_cover" accept="image/*" onchange="previewImage(event)" />
-                        {% if book.cover_url %}
+                        <input
+                            type="file"
+                            class="form-control"
+                            id="book_cover"
+                            name="book_cover"
+                            accept="image/*"
+                            onchange="previewImage(event)"
+                        />
+                        
+                        {% if book.image_url %}
+                        <!-- Current Image -->
                         <div class="mt-2">
+                            <p>Current Image:</p>
                             <img
-                                src="{{ url_for('static', filename='uploads/' ~ book.cover_url) }}"
-                                alt="Book Cover"
+                                src="{{ book.image_url }}"
+                                alt="{{ book.title }} Cover"
                                 class="img-thumbnail"
-                                width="150"
+                                style="max-width: 150px;"
                             />
                         </div>
                         {% endif %}
-                        <p class="mt-2">Current Image: 
-                            {% if book.image_url %}
-                              <img src="{{ book.image_url }}" alt="{{ book.title }}" class="img-thumbnail" style="max-width: 150px;">
-                            {% else %}
-                              <em>No image uploaded.</em>
-                            {% endif %}
-                        </p>
-                        <!-- Preview selected image -->
+                        
+                        <!-- Preview Selected Image -->
                         <div class="mt-2">
-                            <img id="image_preview" alt="Image Preview" class="img-thumbnail" style="max-width: 150px;">
+                            <p>Preview New Image:</p>
+                            <img
+                                id="image_preview"
+                                alt="Image Preview"
+                                class="img-thumbnail"
+                                style="max-width: 150px;"
+                            />
                         </div>
                     </div>
+
+                    <!-- Buttons -->
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-floppy2"></i> Save Changes
                     </button>
@@ -142,7 +165,7 @@
 <script>
     function previewImage(event) {
         const reader = new FileReader();
-        reader.onload = function() {
+        reader.onload = function () {
             const output = document.getElementById('image_preview');
             output.src = reader.result;
         };

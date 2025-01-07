@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
-from app.models import db, Admin, Book, User
+from app.models import db, Admin, Book, User, BorrowRequest
 import os
 from werkzeug.utils import secure_filename
 
@@ -90,11 +90,20 @@ def dashboard():
     return render_template('dashboard.html', title="Admin Dashboard", books=books, user_count=user_count, book_count=book_count)
 
 # User Home Page (protected)
-@main.route('/home')
+@main.route('/home', methods=['GET'])
 @user_required
 def userhome():
-    books = Book.query.all()
-    return render_template('home.html', title="User Home", books=books)
+    query = request.args.get('query', '')
+    # Filter books based on the search query
+    if query:
+        books = Book.query.filter(
+            (Book.title.ilike(f"%{query}%")) |
+            (Book.author.ilike(f"%{query}%")) |
+            (Book.genre.ilike(f"%{query}%"))
+        ).all()
+    else:
+        books = Book.query.all()
+    return render_template('home.html', title="User Home", books=books, query=query)
 
 # Public Home
 @main.route('/')
@@ -111,23 +120,22 @@ def add_book():
         genre = request.form['genre']
         description = request.form['description']
         copies_available = int(request.form['copies_available'])
+        
         # Handle image upload
-        file = request.files.get('cover_image')
+        file = request.files.get('book_cover')
         image_url = None
         if file:
             try:
-                upload_folder = current_app.config['UPLOAD_FOLDER']  # Access the UPLOAD_FOLDER from app config
+                upload_folder = os.path.join(current_app.root_path, 'static/uploads/books')
+                os.makedirs(upload_folder, exist_ok=True)  # Ensure the directory exists
                 filename = secure_filename(file.filename)
                 filepath = os.path.join(upload_folder, filename)
                 file.save(filepath)
-                image_url = f'/static/uploads/books/{filename}'  # URL for accessing the file
-                print("File saved successfully at:", filepath)  # Debug print
+                image_url = f'static/uploads/books/{filename}'  # Relative path for accessing the file
             except Exception as e:
                 flash(f"Image upload failed: {e}", "danger")
-                return redirect(url_for('admin.add_book'))
-        else:
-            flash("No file provided.", "danger")
-            return redirect(url_for('admin.add_book'))
+                return redirect(url_for('admin.dashboard'))
+
         # Create a new book
         new_book = Book(
             title=title,
@@ -143,6 +151,7 @@ def add_book():
         return redirect(url_for('admin.dashboard'))
     return render_template('add_book.html', title="Add Book")
 
+
 # Edit Book (admin only)
 @admin.route('/edit-book/<int:book_id>', methods=['GET', 'POST'])
 @admin_required
@@ -155,19 +164,19 @@ def edit_book(book_id):
         book.description = request.form['description']
         book.copies_available = int(request.form['copies_available'])
         # Handle optional image upload
-        file = request.files.get('cover_image')
-        image_url = None
+        file = request.files.get('book_cover')
         if file:
             try:
-                upload_folder = current_app.config['UPLOAD_FOLDER']  # Access the UPLOAD_FOLDER from app config
+                upload_folder = os.path.join(current_app.root_path, 'static/uploads/books')
+                os.makedirs(upload_folder, exist_ok=True)  # Ensure the directory exists
                 filename = secure_filename(file.filename)
                 filepath = os.path.join(upload_folder, filename)
                 file.save(filepath)
-                image_url = f'/static/uploads/books/{filename}'  # URL for accessing the file
-                print("File saved successfully at:", filepath)  # Debug print
+                book.image_url = f'static/uploads/books/{filename}'  # Update image URL
             except Exception as e:
                 flash(f"Image upload failed: {e}", "danger")
                 return redirect(url_for('admin.edit_book', book_id=book_id))
+
         db.session.commit()
         flash('Book updated successfully!', 'success')
         return redirect(url_for('admin.dashboard'))
@@ -280,3 +289,44 @@ def delete_user(user_id):
 def user_management():
     users = User.query.all()
     return render_template('user_management.html', users=users, title="User Management")
+
+@main.route('/request_borrow/<int:book_id>', methods=['POST'])
+@login_required
+def request_borrow(book_id):
+    book = Book.query.get(book_id)
+    if book and book.copies_available > 0:
+        borrower_name = request.form.get('borrower_name')
+        new_request = BorrowRequest(book_id=book_id, borrower_name=borrower_name)
+        db.session.add(new_request)
+        book.copies_available -= 1  # Reduce the number of copies available
+        db.session.commit()
+        flash('Borrow request submitted!', 'success')
+    else:
+        flash('Sorry, this book is currently unavailable.', 'danger')
+    return redirect(url_for('main.userhome'))
+
+@admin.route('/approve_request/<int:request_id>')
+@admin_required
+def approve_request(request_id):
+    # Logic to approve the borrow request
+    borrow_request = BorrowRequest.query.get(request_id)
+    if borrow_request:
+        borrow_request.status = 'Approved'
+        db.session.commit()
+    return redirect(url_for('admin.manage_borrow_requests'))
+
+@admin.route('/reject_request/<int:request_id>')
+@admin_required
+def reject_request(request_id):
+    # Logic to reject the borrow request
+    borrow_request = BorrowRequest.query.get(request_id)
+    if borrow_request:
+        borrow_request.status = 'Rejected'
+        db.session.commit()
+    return redirect(url_for('admin.manage_borrow_requests'))
+
+@admin.route('/manage-borrow-requests')
+@admin_required
+def manage_borrow_requests():
+    borrow_requests = BorrowRequest.query.all()
+    return render_template('manage_borrow_requests.html', borrow_requests=borrow_requests)

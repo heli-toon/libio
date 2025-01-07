@@ -58,5 +58,6 @@ class BorrowRequest(db.Model):
     borrower_name = db.Column(db.String(100), nullable=False)
     request_date = db.Column(db.DateTime, default=datetime.utcnow)
 
+    book = db.relationship('Book', backref=db.backref('borrow_requests', lazy=True))
     def __repr__(self):
         return f"<BorrowRequest {self.id} - Book ID {self.book_id}>"
