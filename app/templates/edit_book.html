@@ -1,111 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Book - Libio</title>
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
-  </head>
-  <body>
+</head>
+<body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
-      <div class="container">
-        <a class="navbar-brand" href="/">Libio Dashboard</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('admin.logout') }}">Logout</a>
-            </li>
-          </ul>
+        <div class="container">
+            <a class="navbar-brand" href="/">Libio Dashboard</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </nav>
 
     <!-- Edit Book Form -->
     <div class="container py-5">
-      <h2 class="mb-4">Edit Book</h2>
-      <div class="card shadow">
-        <div class="card-body">
-          <form action="{{ url_for('admin.edit_book', book_id=book.id) }}" method="POST">
-            <div class="mb-3">
-              <label for="title" class="form-label">Book Title</label>
-              <input
-                type="text"
-                class="form-control"
-                id="title"
-                name="title"
-                value="{{ book.title }}"
-                required
-              />
+        <h2 class="mb-4">Edit Book</h2>
+        <div class="card shadow">
+            <div class="card-body">
+                <form
+                    action="{{ url_for('admin.edit_book', book_id=book.id) }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Book Title</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="title"
+                            name="title"
+                            value="{{ book.title }}"
+                            required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="author" class="form-label">Author</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="author"
+                            name="author"
+                            value="{{ book.author }}"
+                            required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="genre" class="form-label">Genre</label>
+                        <select name="genre" class="form-select" id="genre" required>
+                            <option value="{{ book.genre }}" selected>{{ book.genre }}</option>
+                            <option value="Philosophy & Psychology">Philosophy & Psychology</option>
+                            <option value="Religion">Religion</option>
+                            <option value="Social Sciences">Social Sciences</option>
+                            <option value="Science">Science</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Arts & Creation">Arts & Creation</option>
+                            <option value="Literature">Literature</option>
+                            <option value="Fiction">Fiction</option>
+                            <option value="Unclassified">Unclassified</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea
+                            class="form-control"
+                            id="description"
+                            name="description"
+                            rows="4"
+                        >{{ book.description }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="copies_available" class="form-label">Copies Available</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="copies_available"
+                            name="copies_available"
+                            value="{{ book.copies_available }}"
+                            min="1"
+                            required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="book_cover" class="form-label">Book Cover</label>
+                        <input type="file" class="form-control" id="book_cover" name="book_cover" accept="image/*" onchange="previewImage(event)" />
+                        {% if book.cover_url %}
+                        <div class="mt-2">
+                            <img
+                                src="{{ url_for('static', filename='uploads/' ~ book.cover_url) }}"
+                                alt="Book Cover"
+                                class="img-thumbnail"
+                                width="150"
+                            />
+                        </div>
+                        {% endif %}
+                        <p class="mt-2">Current Image: 
+                            {% if book.image_url %}
+                              <img src="{{ book.image_url }}" alt="{{ book.title }}" class="img-thumbnail" style="max-width: 150px;">
+                            {% else %}
+                              <em>No image uploaded.</em>
+                            {% endif %}
+                        </p>
+                        <!-- Preview selected image -->
+                        <div class="mt-2">
+                            <img id="image_preview" alt="Image Preview" class="img-thumbnail" style="max-width: 150px;">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-floppy2"></i> Save Changes
+                    </button>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary ms-2">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </form>
             </div>
-            <div class="mb-3">
-              <label for="author" class="form-label">Author</label>
-              <input
-                type="text"
-                class="form-control"
-                id="author"
-                name="author"
-                value="{{ book.author }}"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label for="genre" class="form-label">Genre</label>
-              <select name="genre" id="genre" title="Genre" class="form-select" id="genre" value="{{ book.author }}">
-                <option value="General Works, Computer Science and Information">General Works, Computer Science and Information</option>
-                <option value="Philosphy & Psycholoy">Philosphy & Psycholoy</option>
-                <option value="Religion">Religion</option>
-                <option value="Social Sciences">Social Sciences</option>
-                <option value="Science">Science</option>
-                <option value="Technology">Technology</option>
-                <option value="Arts & creation">Arts & creation</option>
-                <option value="Literature">Literature</option>
-                <option value="Fiction">Fiction</option>
-                <option value="Unclassified">Unclassified</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="description" class="form-label">Description</label>
-              <textarea
-                class="form-control"
-                id="description"
-                name="description"
-                rows="4"
-              >{{ book.description }}</textarea>
-            </div>
-            <div class="mb-3">
-              <label for="copies_available" class="form-label">Copies Available</label>
-              <input
-                type="number"
-                class="form-control"
-                id="copies_available"
-                name="copies_available"
-                value="{{ book.copies_available }}"
-                min="1"
-                required
-              />
-            </div>
-            <button type="submit" class="btn btn-primary py-2 px-4" style="background-color: #16213e; border: none">
-              <i class="bi bi-floppy2"></i> Save Changes
-            </button>
-            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary ms-2 py-2 px-4"><i class="bi bi-x-circle"></i> Cancel</a>
-          </form>
         </div>
-      </div>
     </div>
-  </body>
-  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</body>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script>
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('image_preview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
 </html>

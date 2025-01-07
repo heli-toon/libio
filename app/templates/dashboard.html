@@ -36,6 +36,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
+              <a href="/admin/user-management" class="nav-link">User Management</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{{ url_for('main.logout') }}">Logout</a>
             </li>
           </ul>
@@ -86,7 +89,7 @@
       <div class="card shadow mb-4">
         <div class="card-body">
           <h5 class="mb-3">Add a New Book</h5>
-          <form action="{{ url_for('admin.add_book') }}" method="POST">
+          <form action="{{ url_for('admin.add_book') }}" method="POST" enctype="multipart/form-data">
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="title" class="form-label">Book Title</label>
@@ -141,6 +144,14 @@
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
               <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="book_cover" class="form-label">Book Cover</label>
+              <input type="file" class="form-control" id="book_cover" name="book_cover" accept="image/*" onchange="previewImage(event)" />
+              <!-- Preview selected image -->
+              <div class="mt-2">
+                <img id="image_preview" alt="Image Preview" class="img-thumbnail" style="max-width: 150px;">
+              </div>
             </div>
             <button
               type="submit"
@@ -215,4 +226,14 @@
     </div>
   </body>
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script>
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('image_preview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+  </script>
 </html>

@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Libio | Home Library</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Bootstrap CSS -->
     <link
       href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
       rel="stylesheet"
@@ -59,7 +58,7 @@
     </nav>
 
     <!-- Flash (Alert) messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
       <div class="container mt-3">
         {% for category, message in messages %}
@@ -69,7 +68,8 @@
         </div>
         {% endfor %}
       </div>
-      {% endif %} {% endwith %}
+      {% endif %}
+    {% endwith %}
     <!-- Main Content -->
     <div class="container my-4">
       <h1 class="text-center mb-4">Available Books</h1>
@@ -77,6 +77,10 @@
         {% for book in books %}
         <div class="col-md-4">
           <div class="card mb-4">
+            <!-- Display the book cover image if it exists -->
+            {% if book.image_url %}
+            <img src="{{ book.image_url }}" class="card-img-top" alt="Book Cover">
+            {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ book.title }}</h5>
               <p class="card-text">
@@ -88,6 +92,13 @@
               <p class="card-text">
                 <strong>Copies Available:</strong> {{ book.copies_available }}
               </p>
+              {% if current_user.is_authenticated %}
+              <!-- Borrow Request Form -->
+              <form action="{{ url_for('main.request_borrow', book_id=book.id) }}" method="POST">
+                <input type="hidden" name="borrower_name" value="{{ current_user.username }}">
+                <button type="submit" class="btn btn-primary">Request Borrow</button>
+              </form>
+              {% endif %}
             </div>
           </div>
         </div>

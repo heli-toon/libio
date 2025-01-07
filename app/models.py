@@ -43,6 +43,7 @@ class Book(db.Model):
     title = db.Column(db.String(100), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     genre = db.Column(db.String(50), nullable=True)
+    image_url = db.Column(db.String(255), nullable=True)
     description = db.Column(db.Text, nullable=True)
     copies_available = db.Column(db.Integer, nullable=False, default=1)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

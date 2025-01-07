@@ -2,10 +2,14 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from app.models import db, Admin, Book, User
+import os
+from werkzeug.utils import secure_filename
 
 # Blueprint definitions
 main = Blueprint('main', __name__)
 admin = Blueprint('admin', __name__)
+
+from flask import current_app
 
 # Custom Decorators
 def admin_required(func):
@@ -67,7 +71,6 @@ def login():
     
     return render_template('login.html', title="User Login")
 
-
 # Logout
 @main.route('/logout')
 @admin.route('/logout')
@@ -99,26 +102,46 @@ def home():
     return render_template('index.html', title="Home")
 
 # Add Book (admin only)
-@admin.route('/add-book', methods=['POST'])
+@admin.route('/add-book', methods=['GET', 'POST'])
 @admin_required
 def add_book():
-    title = request.form['title']
-    author = request.form['author']
-    genre = request.form['genre']
-    description = request.form['description']
-    copies_available = int(request.form['copies_available'])
-
-    new_book = Book(
-        title=title,
-        author=author,
-        genre=genre,
-        description=description,
-        copies_available=copies_available,
-    )
-    db.session.add(new_book)
-    db.session.commit()
-    flash('Book added successfully!', 'success')
-    return redirect(url_for('admin.dashboard'))
+    if request.method == 'POST':
+        title = request.form['title']
+        author = request.form['author']
+        genre = request.form['genre']
+        description = request.form['description']
+        copies_available = int(request.form['copies_available'])
+        # Handle image upload
+        file = request.files.get('cover_image')
+        image_url = None
+        if file:
+            try:
+                upload_folder = current_app.config['UPLOAD_FOLDER']  # Access the UPLOAD_FOLDER from app config
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(upload_folder, filename)
+                file.save(filepath)
+                image_url = f'/static/uploads/books/{filename}'  # URL for accessing the file
+                print("File saved successfully at:", filepath)  # Debug print
+            except Exception as e:
+                flash(f"Image upload failed: {e}", "danger")
+                return redirect(url_for('admin.add_book'))
+        else:
+            flash("No file provided.", "danger")
+            return redirect(url_for('admin.add_book'))
+        # Create a new book
+        new_book = Book(
+            title=title,
+            author=author,
+            genre=genre,
+            description=description,
+            copies_available=copies_available,
+            image_url=image_url,
+        )
+        db.session.add(new_book)
+        db.session.commit()
+        flash('Book added successfully!', 'success')
+        return redirect(url_for('admin.dashboard'))
+    return render_template('add_book.html', title="Add Book")
 
 # Edit Book (admin only)
 @admin.route('/edit-book/<int:book_id>', methods=['GET', 'POST'])
@@ -131,10 +154,24 @@ def edit_book(book_id):
         book.genre = request.form['genre']
         book.description = request.form['description']
         book.copies_available = int(request.form['copies_available'])
+        # Handle optional image upload
+        file = request.files.get('cover_image')
+        image_url = None
+        if file:
+            try:
+                upload_folder = current_app.config['UPLOAD_FOLDER']  # Access the UPLOAD_FOLDER from app config
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(upload_folder, filename)
+                file.save(filepath)
+                image_url = f'/static/uploads/books/{filename}'  # URL for accessing the file
+                print("File saved successfully at:", filepath)  # Debug print
+            except Exception as e:
+                flash(f"Image upload failed: {e}", "danger")
+                return redirect(url_for('admin.edit_book', book_id=book_id))
         db.session.commit()
         flash('Book updated successfully!', 'success')
         return redirect(url_for('admin.dashboard'))
-    return render_template('edit_book.html', book=book)
+    return render_template('edit_book.html', book=book, title="Edit Book")
 
 # Delete Book (admin only)
 @admin.route('/delete-book/<int:book_id>', methods=['POST'])
@@ -186,3 +223,60 @@ def signup():
         return redirect(url_for('main.userhome'))
 
     return render_template('signup.html', title="Signup")
+
+# Add User (admin only)
+@admin.route('/add-user', methods=['GET', 'POST'])
+@admin_required
+def add_user():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            flash('Username already exists. Please choose a different one.', 'danger')
+            return redirect(url_for('admin.add_user'))
+
+        new_user = User(
+            username=username,
+            email=email
+        )
+        new_user.set_password(password)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('User added successfully!', 'success')
+        return redirect(url_for('admin.user_management'))
+    return render_template('add_user.html', title="Add User")
+
+# Edit User (admin only)
+@admin.route('/edit-user/<int:user_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if request.method == 'POST':
+        user.username = request.form['username']
+        user.email = request.form['email']
+        password = request.form['password']
+        if password:
+            user.set_password(password)
+        db.session.commit()
+        flash('User updated successfully!', 'success')
+        return redirect(url_for('admin.user_management'))
+    return render_template('edit_user.html', user=user, title="Edit User")
+
+# Delete User (admin only)
+@admin.route('/delete-user/<int:user_id>', methods=['POST'])
+@admin_required
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted successfully!', 'success')
+    return redirect(url_for('admin.user_management'))
+
+# User Management (admin only)
+@admin.route('/user-management')
+@admin_required
+def user_management():
+    users = User.query.all()
+    return render_template('user_management.html', users=users, title="User Management")
